@@ -1,0 +1,10 @@
+*.mp4
+*.mov
+*.MOV
+*.m4v
+logs/
+last-run.log
+bin/
+__pycache__/
+.DS_Store
+.build/
