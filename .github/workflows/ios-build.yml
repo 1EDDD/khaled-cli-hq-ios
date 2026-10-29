@@ -1,0 +1,53 @@
+name: Build iOS and iPadOS app
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios-build.yml'
+  pull_request:
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build for iPhone and iPad
+        run: >-
+          xcodebuild
+          -project ios/KhaledHQ.xcodeproj
+          -scheme KhaledHQ
+          -configuration Release
+          -sdk iphoneos
+          -destination 'generic/platform=iOS'
+          -derivedDataPath build/DerivedData
+          CODE_SIGNING_ALLOWED=NO
+          build
+
+      - name: Package unsigned IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R build/DerivedData/Build/Products/Release-iphoneos/KhaledHQ.app build/Payload/
+          (cd build && /usr/bin/zip -qry KhaledHQ-unsigned.ipa Payload)
+
+      - name: Upload unsigned IPA and app bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: KhaledHQ-iOS-unsigned-IPA
+          path: |
+            build/KhaledHQ-unsigned.ipa
+            build/DerivedData/Build/Products/Release-iphoneos/KhaledHQ.app
+          if-no-files-found: error
+          retention-days: 14
