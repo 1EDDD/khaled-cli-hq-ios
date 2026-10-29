@@ -498,11 +498,14 @@ private extension Data {
     }
 
     func readBEUInt32(at offset: Int) throws -> UInt32 {
-        guard offset >= 0, offset + 4 <= count else { throw MP4PatchError.malformed("قراءة خارج حدود البيانات") }
-        return (UInt32(self[index(startIndex, offsetBy: offset)]) << 24)
-            | (UInt32(self[index(startIndex, offsetBy: offset + 1)]) << 16)
-            | (UInt32(self[index(startIndex, offsetBy: offset + 2)]) << 8)
-            | UInt32(self[index(startIndex, offsetBy: offset + 3)])
+        guard offset >= 0, offset + 4 <= count else {
+            throw MP4PatchError.malformed("قراءة خارج حدود البيانات")
+        }
+        let b0 = UInt32(self[index(startIndex, offsetBy: offset)])
+        let b1 = UInt32(self[index(startIndex, offsetBy: offset + 1)])
+        let b2 = UInt32(self[index(startIndex, offsetBy: offset + 2)])
+        let b3 = UInt32(self[index(startIndex, offsetBy: offset + 3)])
+        return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3
     }
 
     func readBEUInt64(at offset: Int) throws -> UInt64 {
