@@ -121,7 +121,7 @@ enum VideoProcessor {
 
         progress(0.78, "تطبيق معالجة MP4")
         let folder = try outputFolder()
-        let label = requestedShortEdge >= 2160 ? "4K" : (requestedShortEdge >= 1440 ? "1440p" : "1080p")
+        let label = geometry.shortEdge >= 2160 ? "4K" : (geometry.shortEdge >= 1440 ? "1440p" : "1080p")
         let outputURL = uniqueOutputURL(in: folder,
             baseName: inputURL.deletingPathExtension().lastPathComponent + "_\(label)_khaled_cli")
         let report = try MP4Patcher.transform(inputURL: preparedURL, outputURL: outputURL, multiplier: 10)
